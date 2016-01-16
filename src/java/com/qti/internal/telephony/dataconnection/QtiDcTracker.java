@@ -181,6 +181,7 @@ public final class QtiDcTracker extends DcTracker {
         return super.onUpdateIcc();
     }
 
+    @Override
     protected void setInitialAttachApn() {
         ArrayList<ApnSetting> apnList = create3gppApnsList();
         setInitialAttachApn(apnList, getPreferredApn(apnList));

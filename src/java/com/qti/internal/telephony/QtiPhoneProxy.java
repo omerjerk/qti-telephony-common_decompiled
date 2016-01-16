@@ -22,7 +22,7 @@ public class QtiPhoneProxy extends PhoneProxy {
     }
 
     public void handleMessage(Message msg) {
-        AsyncResult ar = msg.obj;
+        AsyncResult ar = (AsyncResult) msg.obj;
         switch (msg.what) {
             case QmiPrimitiveTypes.SIZE_OF_BYTE /*1*/:
             case QmiOemHookConstants.SUCCESS_STATUS /*3*/:

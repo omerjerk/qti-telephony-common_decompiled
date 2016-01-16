@@ -12,6 +12,7 @@ import android.telephony.Rlog;
 import android.util.Log;
 import com.qti.internal.telephony.dataconnection.QtiApnProfileOmh;
 import com.qti.internal.telephony.dataconnection.QtiApnSetting;
+import com.qti.internal.telephony.UiccCardProvisioner.UiccProvisionStatus;
 import com.qualcomm.qcrilhook.IQcRilHook;
 import com.qualcomm.qcrilhook.OemHookCallback;
 import com.qualcomm.qcrilhook.QcRilHook;

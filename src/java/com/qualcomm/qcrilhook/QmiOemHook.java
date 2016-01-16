@@ -131,7 +131,8 @@ public class QmiOemHook extends Handler {
             case QMI_OEM_HOOK_UNSOL /*0*/:
                 Log.v(LOG_TAG, "Thread=" + Thread.currentThread().getName() + " received " + msg);
                 Log.v(LOG_TAG, "QMI_OEM_HOOK_UNSOL received");
-                Message mesg = msg.obj.result;
+                AsyncResult ar = (AsyncResult) msg.obj;
+                Message mesg = (Message) ar.result;
                 byte[] response = (byte[]) mesg.obj;
                 int phoneId = mesg.arg1;
                 Log.d(LOG_TAG, "QMI_OEM_HOOK_UNSOL received phoneId: " + phoneId);

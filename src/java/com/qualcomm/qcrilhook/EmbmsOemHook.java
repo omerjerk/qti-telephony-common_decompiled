@@ -2181,10 +2181,10 @@ public class EmbmsOemHook extends Handler {
 
     public void handleMessage(Message msg) {
         Log.i(LOG_TAG, "received message : " + msg.what);
-        AsyncResult ar = msg.obj;
+        AsyncResult ar = (AsyncResult) msg.obj;
         switch (msg.what) {
             case UNSOL_TYPE_STATE_CHANGE /*1*/:
-                HashMap<Integer, Object> map = ar.result;
+                HashMap<Integer, Object> map = (HashMap<Integer, Object>) ar.result;
                 if (map == null) {
                     Log.e(LOG_TAG, "Hashmap async userobj is NULL");
                     return;
@@ -2557,21 +2557,19 @@ public class EmbmsOemHook extends Handler {
 
     public int contentDescription(int traceId, byte callId, byte[] tmgi, int numberOfParameter, int[] parameterCode, int[] parameterValue, Message msg, int phoneId) {
         try {
-            Object parameterCode2;
-            Object parameterValue2;
             Log.i(LOG_TAG, "contentDescription called on PhoneId: " + phoneId);
             if (parameterCode == null || parameterValue == null) {
                 Log.i(LOG_TAG, "contentDescription: either parameterCode or parameterValue is nullparameterCode = " + parameterCode + " parameterValue = " + parameterValue);
-                parameterCode2 = new int[SUCCESS];
-                parameterValue2 = new int[SUCCESS];
+                parameterCode = new int[1];
+                parameterValue = new int[1];
             }
-            if (numberOfParameter == parameterCode2.length && numberOfParameter == parameterValue2.length && parameterCode2.length == parameterValue2.length) {
+            if (numberOfParameter == parameterCode.length && numberOfParameter == parameterValue.length && parameterCode.length == parameterValue.length) {
                 int parameterArraySize = numberOfParameter * UNSOL_TYPE_ACTIVE_TMGI_LIST;
                 int pointer = SUCCESS;
                 int[] parameterArray = new int[parameterArraySize];
                 for (int i = SUCCESS; i < parameterArraySize; i += UNSOL_TYPE_ACTIVE_TMGI_LIST) {
-                    parameterArray[i] = parameterCode2[pointer];
-                    parameterArray[i + UNSOL_TYPE_STATE_CHANGE] = parameterValue2[pointer];
+                    parameterArray[i] = parameterCode[pointer];
+                    parameterArray[i + UNSOL_TYPE_STATE_CHANGE] = parameterValue[pointer];
                     pointer += UNSOL_TYPE_STATE_CHANGE;
                 }
                 Log.i(LOG_TAG, "contentDescription: parameterArray: " + Arrays.toString(parameterArray));
@@ -2579,7 +2577,7 @@ public class EmbmsOemHook extends Handler {
                 this.mQmiOemHook.sendQmiMessageAsync((short) TWO_BYTES, (short) EMBMSHOOK_MSG_ID_CONTENT_DESCRIPTION, req.getTypes(), req.getItems(), msg, phoneId);
                 return SUCCESS;
             }
-            Log.e(LOG_TAG, "contentDescription: Invalid input, numberOfParameter = " + numberOfParameter + " parameterCode = " + parameterCode2 + " parameterValue = " + parameterValue2);
+            Log.e(LOG_TAG, "contentDescription: Invalid input, numberOfParameter = " + numberOfParameter + " parameterCode = " + parameterCode + " parameterValue = " + parameterValue);
             return FAILURE;
         } catch (IOException e) {
             Log.e(LOG_TAG, "IOException occurred during contentDescription !!!!!!");

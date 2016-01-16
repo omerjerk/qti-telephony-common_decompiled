@@ -10,6 +10,7 @@ import android.util.Log;
 import com.android.internal.telephony.cdma.CDMAPhone;
 import com.android.internal.telephony.cdma.CdmaSubscriptionSourceManager;
 import com.qti.internal.telephony.QtiRilInterface;
+import com.qti.internal.telephony.dataconnection.QtiApnProfileOmh.ApnProfileTypeModem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -118,8 +119,8 @@ public final class QtiCdmaApnProfileTracker extends Handler {
                 this.mOmhReadProfileCount--;
                 return;
             }
-            ArrayList<QtiApnSetting> dataProfileListModem = ar.result;
-            ApnProfileTypeModem modemProfile = ar.userObj;
+            ArrayList<QtiApnSetting> dataProfileListModem = (ArrayList<QtiApnSetting>) ar.result;
+            ApnProfileTypeModem modemProfile = (ApnProfileTypeModem) ar.userObj;
             this.mOmhReadProfileCount--;
             if (dataProfileListModem != null && dataProfileListModem.size() > 0) {
                 String serviceType = modemProfile.getDataServiceType();

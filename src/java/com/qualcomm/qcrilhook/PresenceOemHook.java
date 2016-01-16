@@ -1,11 +1,21 @@
 package com.qualcomm.qcrilhook;
 
 import android.content.Context;
+import android.os.AsyncResult;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
 import com.qualcomm.qcrilhook.QmiOemHookConstants.ResponseType;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.*;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.Publish.*;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.UnSubscribe.UnSubscribeRequest;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.UnPublish.UnPublishRequest;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.Subscribe.*;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.NotifyFmt.SetFmt;
+import com.qualcomm.qcrilhook.PresenceMsgBuilder.EventReport.*;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -206,7 +216,7 @@ public class PresenceOemHook {
         Integer returnObject = Integer.valueOf(successStatus);
         int val;
         PresenceUnsolIndication ind;
-        Object returnObject2;
+        Object returnObject2 = returnObject;
         PresenceUnsolIndication presenceUnSolInd;
         PresenceSolResponse presenceSolResp;
         switch (messageId) {
@@ -244,13 +254,13 @@ public class PresenceOemHook {
                 returnObject2 = ind;
                 break;
             case (short) 36:
-                Integer presenceSolResp2 = new PresenceSolResponse();
+                PresenceSolResponse presenceSolResp2 = new PresenceSolResponse();
                 if (successStatus == 0) {
                     int enablerState = PresenceMsgParser.parseEnablerState(respByteBuf);
                     Log.v(LOG_TAG, "Enabler state = " + enablerState);
                     presenceSolResp2.result = successStatus;
                     presenceSolResp2.data = Integer.valueOf(enablerState);
-                    returnObject = presenceSolResp2;
+                    returnObject2 = presenceSolResp2;
                     Log.v(LOG_TAG, "Response: QCRILHOOK_PRESENCE_IMS_ENABLER_STATE_REQ=" + IMS_ENABLER_RESPONSE[enablerState]);
                     break;
                 }
@@ -319,13 +329,18 @@ public class PresenceOemHook {
                 returnObject2 = presenceSolResp;
                 break;
         }
-        return returnObject;
+        return returnObject2;
     }
 
     public static Object handleMessage(Message msg) {
         switch (msg.what) {
             case OEM_HOOK_UNSOL_IND /*1*/:
-                HashMap<Integer, Object> map = msg.obj.result;
+            	AsyncResult ar = (AsyncResult) msg.obj;
+                HashMap<Integer, Object> map = (HashMap<Integer, Object>) ar.result;
+                if (map == null ) {
+                	//hack by omerjerk
+                	map = (HashMap<Integer, Object>) ar.userObj;
+                }
                 if (map != null) {
                     return receive(map);
                 }

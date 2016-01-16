@@ -97,7 +97,7 @@ public class UiccCardProvisioner extends Handler {
         AsyncResult ar;
         switch (msg.what) {
             case EVENT_ICC_CHANGED /*1*/:
-                ar = msg.obj;
+                ar = (AsyncResult) msg.obj;
                 if (ar.result != null) {
                     updateIccAvailability(((Integer) ar.result).intValue());
                     return;

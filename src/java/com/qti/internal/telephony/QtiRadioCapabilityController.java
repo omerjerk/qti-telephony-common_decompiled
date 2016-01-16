@@ -104,8 +104,8 @@ public class QtiRadioCapabilityController extends Handler {
         Integer phoneId;
         switch (msg.what) {
             case SUCCESS /*1*/:
-                ar = msg.obj;
-                phoneId = ar.userObj;
+                ar = (AsyncResult) msg.obj;
+                phoneId = (Integer) ar.userObj;
                 logv("EVENT_RADIO_AVAILABLE, phoneId = " + phoneId);
                 processRadioAvailable(ar, phoneId.intValue());
                 return;
@@ -254,7 +254,7 @@ public class QtiRadioCapabilityController extends Handler {
                 if (this.mModemRatCapabilitiesAvailable) {
                     int i;
                     updatePreferredStackIds(isNwModeRequest);
-                    for (i = FAILURE; i < mNumPhones; i += SUCCESS) {
+                    for (i = 0; i < mNumPhones; i += 1) {
                         logv(" pref stack[" + i + "] = " + this.mPreferredStackId[i] + " current stack[" + i + "] = " + this.mCurrentStackId[i]);
                         if (this.mPreferredStackId[i] != this.mCurrentStackId[i]) {
                             isUpdateStackBindingRequired = DBG;
@@ -275,7 +275,7 @@ public class QtiRadioCapabilityController extends Handler {
             loge("Error: Call state = " + callInProgress + ", ecm state = " + isInEcmState + " rat cap available = " + this.mModemRatCapabilitiesAvailable);
             response = FAILURE;
         }
-        return response;
+        return response == SUCCESS;
     }
 
     private void updatePreferredStackIds(boolean isNwModeRequest) {
@@ -335,9 +335,9 @@ public class QtiRadioCapabilityController extends Handler {
 
     private int getNetworkModeFromDB(int phoneId) {
         int[] subId = this.mQtiSubscriptionController.getSubId(phoneId);
-        boolean isSubActive = this.mQtiSubscriptionController.isActiveSubId(subId[FAILURE]);
-        if (this.mQtiSubscriptionController.isActiveSubId(subId[FAILURE])) {
-            int networkMode = Global.getInt(this.mContext.getContentResolver(), "preferred_network_mode" + subId[FAILURE], Phone.PREFERRED_NT_MODE);
+        boolean isSubActive = this.mQtiSubscriptionController.isActiveSubId(subId[0]);
+        int networkMode = Global.getInt(this.mContext.getContentResolver(), "preferred_network_mode" + subId[0], Phone.PREFERRED_NT_MODE);
+        if (this.mQtiSubscriptionController.isActiveSubId(subId[0])) {
             logv(" get sub based N/W mode, val[" + phoneId + "] = " + networkMode);
             return networkMode;
         }
